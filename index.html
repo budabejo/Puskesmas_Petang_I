@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Pelayanan & Pengaduan</title>
+    <!-- Tailwind CSS CDN untuk styling cepat dan responsif -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #3F2E6C 0%, #000080 100%); /* Ungu Tua ke Biru Malam */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column; /* Mengubah arah flex menjadi kolom */
+            justify-content: flex-start; /* Mulai dari atas */
+            align-items: center;
+            padding: 20px;
+        }
+        .global-header {
+            width: 100%;
+            max-width: 800px; /* Sesuai dengan lebar container utama */
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 20px; /* Jarak antara header dan container utama */
+            display: flex; /* Menggunakan flexbox untuk penataan logo dan teks */
+            flex-direction: column; /* Default: kolom untuk mobile */
+            align-items: center; /* Teks di tengah untuk mobile */
+            text-align: center;
+        }
+        @media (min-width: 768px) {
+            .global-header {
+                flex-direction: row; /* Baris untuk desktop */
+                justify-content: space-between; /* Logo di pinggir, teks di tengah */
+                align-items: center;
+                text-align: left; /* Teks kop rata kiri */
+            }
+            .global-header .text-content {
+                flex-grow: 1; /* Memungkinkan teks mengambil ruang yang tersedia */
+                text-align: center; /* Teks tetap di tengah */
+            }
+        }
+
+        .header-logo {
+            width: 80px; /* Ukuran logo */
+            height: 80px;
+            object-fit: contain; /* Memastikan logo tidak terpotong */
+        }
+        @media (min-width: 768px) {
+            .header-logo {
+                width: 100px; /* Ukuran logo lebih besar di desktop */
+                height: 100px;
+            }
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.95); /* Latar belakang semi-transparan */
+            max-width: 800px;
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden; /* Pastikan konten tidak meluber */
+            display: flex;
+            flex-direction: column;
+        }
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row; /* Sidebar di desktop */
+                min-height: 600px; /* Tinggi minimal untuk desktop */
+            }
+            .sidebar {
+                min-width: 250px;
+            }
+            .content-area {
+                border-left: 1px solid #e0e0e0;
+            }
+        }
+        .sidebar {
+            background-color: #3F2E6C; /* Ungu Tua */
+            padding: 20px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Mulai dari atas */
+            border-bottom: 5px solid #00A6A6; /* Aksen Toska */
+        }
+        @media (min-width: 768px) {
+            .sidebar {
+                border-bottom: none;
+                border-right: 5px solid #00A6A6; /* Aksen Toska untuk desktop */
+            }
+        }
+        .sidebar-button {
+            background-color: #00A6A6; /* Toska */
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 15px; /* Jarak antar tombol */
+            
+            /* CSS baru untuk ikon dan teks sejajar menurun */
+            display: flex;
+            flex-direction: column; /* Susun vertikal */
+            align-items: center;   /* Pusatkan horizontal */
+            justify-content: center; /* Pusatkan vertikal */
+            line-height: 1.3; /* Sedikit spasi baris untuk teks */
+        }
+        .sidebar-button i { /* Atur ikon agar punya margin bawah */
+            margin-bottom: 4px; /* Sedikit spasi antara ikon dan teks */
+            margin-right: 0 !important; /* Hapus margin kanan jika ada dari kelas Tailwind sebelumnya */
+        }
+        .sidebar-button:hover {
+            background-color: #FFD700; /* Kuning Cerah */
+            color: #3F2E6C;
+            transform: translateY(-2px);
+        }
+        .sidebar-button.active {
+            background-color: #FFD700; /* Kuning Cerah */
+            color: #3F2E6C;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        .content-area {
+            flex-grow: 1;
+            padding: 30px;
+            color: #333;
+        }
+        .content-section {
+            display: none; /* Sembunyikan secara default */
+        }
+        .content-section.active {
+            display: block; /* Tampilkan saat aktif */
+        }
+        .link-item {
+            background-color: #f0f4f8; /* Abu-abu muda */
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.3s ease;
+        }
+        .link-item:hover {
+            background-color: #e2e8f0;
+        }
+        .social-media-icons a {
+            margin: 0 10px;
+            font-size: 24px;
+            color: #00A6A6; /* Toska */
+            transition: color 0.3s ease;
+        }
+        .social-media-icons a:hover {
+            color: #FFD700; /* Kuning Cerah */
+        }
+    </style>
+    <!-- Font Awesome untuk ikon sosial media -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Global Header (topmost section) -->
+    <div class="global-header">
+        <!-- Badung Regency Logo (left) -->
+        <img src="Lambang_Kabupaten_Badung (1).png" alt="Logo Kabupaten Badung" class="header-logo order-1 md:order-1">
+        
+        <!-- Header Text -->
+        <div class="text-content order-2 md:order-2 mt-4 md:mt-0">
+            <h1 class="text-3xl font-bold mb-1">
+                PEMERINTAH KABUPATEN BADUNG
+            </h1>
+            <h2 class="text-xl font-semibold mb-1">
+                DINAS KESEHATAN
+            </h2>
+            <p class="text-lg text-gray-200 mb-5">
+                UPTD PUSKESMAS PETANG I
+            </p>
+        </div>
+
+        <!-- Puskesmas Logo (right) -->
+        <img src="Logo_Puskesmas.jpg" alt="Logo Puskesmas" class="header-logo order-3 md:order-3">
+    </div>
+
+    <div class="container">
+        <!-- Sidebar Menu -->
+        <div class="sidebar">
+            <h1 class="text-3xl font-bold mb-6 text-center">
+                <i class="fas fa-archive text-yellow-400 mr-2"></i> Portal
+            </h1>
+            <!-- New engaging narrative text for the Portal section -->
+            <p class="text-sm text-gray-200 text-center mb-5">
+                Selamat datang! Temukan semua informasi penting tentang pelayanan kesehatan kami dan sampaikan aspirasi Anda di sini.
+            </p>
+
+            <!-- New menu items added here -->
+            <button class="sidebar-button" data-target="visi-misi">
+                <i class="fas fa-eye"></i> Visi Misi Puskesmas
+            </button>
+            <button class="sidebar-button" data-target="layanan">
+                <i class="fas fa-hands-helping"></i> Jenis Pelayanan
+            </button>
+            <button class="sidebar-button" data-target="waktu-pelayanan">
+                <i class="fas fa-clock"></i> Waktu Pelayanan
+            </button>
+            <button class="sidebar-button" data-target="badung-sehat-mobile">
+                <i class="fas fa-mobile-alt"></i> Badung Sehat Mobile
+            </button>
+            <button class="sidebar-button active" data-target="pengaduan">
+                <i class="fas fa-bullhorn"></i> Layanan Pengaduan & Keluhan
+            </button>
+
+            <div class="mt-auto pt-10 text-center">
+                <div class="social-media-icons flex justify-center">
+                    <a href="https://wa.me/6285847357810" target="_blank" aria-label="WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="mailto:uptd.puskesmaspetang1@gmail.com" target="_blank" aria-label="Email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                    <a href="https://www.instagram.com/puskesmas_petang_1" target="_blank" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.facebook.com/share/16oqkRCRLX/" target="_blank" aria-label="Facebook">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="content-area">
+            <!-- Visi Misi Puskesmas Section -->
+            <div id="visi-misi" class="content-section">
+                <h2 class="text-2xl font-bold text-teal-600 mb-6">Visi Misi Puskesmas</h2>
+                <div class="mb-6 text-gray-700">
+                    <h3 class="text-xl font-semibold text-purple-700 mb-3"><i class="fas fa-bullseye mr-2"></i> Visi</h3>
+                    <p class="mb-4">"Menjadi puskesmas yang mandiri, bermutu, dan terdepan dalam pelayanan kesehatan masyarakat."</p>
+
+                    <h3 class="text-xl font-semibold text-purple-700 mb-3"><i class="fas fa-lightbulb mr-2"></i> Misi</h3>
+                    <ul class="list-disc pl-5">
+                        <li>Memberikan pelayanan kesehatan yang paripurna dan terjangkau bagi seluruh lapisan masyarakat.</li>
+                        <li>Meningkatkan derajat kesehatan masyarakat melalui upaya promotif dan preventif.</li>
+                        <li>Mengembangkan sumber daya manusia yang profesional dan berintegritas.</li>
+                        <li>Menciptakan lingkungan puskesmas yang nyaman dan aman.</li>
+                        <li>Menjalin kemitraan dengan lintas sektor dan masyarakat dalam pembangunan kesehatan.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Jenis Pelayanan Section -->
+            <div id="layanan" class="content-section">
+                <h2 class="text-2xl font-bold text-teal-600 mb-6">Jenis Pelayanan</h2>
+                <p class="mb-6 text-gray-700">Temukan berbagai jenis pelayanan yang kami sediakan untuk memenuhi kebutuhan Anda. Klik tautan di bawah untuk informasi lebih detail atau langsung akses layanan.</p>
+
+                <div class="mb-4">
+                    <h3 class="text-xl font-semibold text-purple-700 mb-3"><i class="fas fa-hospital mr-2"></i> Pelayanan Dalam Gedung</h3>
+                    <a href="https://example.com/ugd" target="_blank" class="block link-item text-blue-700 hover:underline">
+                        <i class="fas fa-ambulance"></i> UGD 24 Jam
+                    </a>
+                    <a href="https://example.com/rawat-jalan" target="_blank" class="block link-item text-blue-700 hover:underline">
+                        <i class="fas fa-clinic-medical"></i> Pelayanan Rawat Jalan
+                    </a>
+                    <ul class="list-disc pl-8 mt-2 text-gray-600">
+                        <li><a href="https://example.com/poli-umum" target="_blank" class="text-blue-600 hover:underline">Poli Umum</a></li>
+                        <li><a href="https://example.com/poli-gigi" target="_blank" class="text-blue-600 hover:underline">Poli Gigi</a></li>
+                        <li><a href="https://example.com/poli-kia" target="_blank" class="text-blue-600 hover:underline">Poli KIA</a></li>
+                        <li><a href="https://example.com/poli-mtbs" target="_blank" class="text-blue-600 hover:underline">Poli MTBS</a></li>
+                        <li><a href="https://example.com/laboratorium" target="_blank" class="text-blue-600 hover:underline">Laboratorium</a></li>
+                    </ul>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="text-xl font-semibold text-purple-700 mb-3"><i class="fas fa-hand-holding-medical mr-2"></i> Pelayanan Luar Gedung</h3>
+                    <a href="https://example.com/puskel" target="_blank" class="block link-item text-blue-700 hover:underline">
+                        <i class="fas fa-people-carry"></i> Puskesmas Keliling (PUSKEL)
+                    </a>
+                    <a href="https://example.com/p3k" target="_blank" class="block link-item text-blue-700 hover:underline">
+                        <i class="fas fa-first-aid"></i> Pertolongan Pertama Pada Kecelakaan (P3K)
+                    </a>
+                </div>
+            </div>
+
+            <!-- Waktu Pelayanan Section -->
+            <div id="waktu-pelayanan" class="content-section">
+                <h2 class="text-2xl font-bold text-teal-600 mb-6">Waktu Pelayanan</h2>
+                <div class="mb-6 text-gray-700">
+                    <h3 class="text-xl font-semibold text-purple-700 mb-3"><i class="fas fa-calendar-alt mr-2"></i> Jam Operasional Puskesmas</h3>
+                    <ul class="list-disc pl-5 mb-4">
+                        <li>**Senin - Jumat:** 08.00 - 16.00 WITA</li>
+                        <li>**Sabtu:** 08.00 - 13.00 WITA</li>
+                        <li>**Minggu & Hari Libur Nasional:** Tutup (Kecuali UGD 24 Jam)</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold text-purple-700 mb-3"><i class="fas fa-notes-medical mr-2"></i> Jam Pelayanan Rawat Jalan</h3>
+                    <ul class="list-disc pl-5">
+                        <li>**Pendaftaran:** 08.00 - 12.00 WITA (Senin-Kamis), 08.00 - 10.00 WITA (Jumat-Sabtu)</li>
+                        <li>**Poli Umum & Gigi:** Sesuai jam pendaftaran</li>
+                        <li>**Poli KIA/KB & MTBS:** Sesuai jadwal yang ditentukan</li>
+                        <li>**Laboratorium:** 08.00 - 15.00 WITA (Senin-Jumat)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Badung Sehat Mobile Section -->
+            <div id="badung-sehat-mobile" class="content-section">
+                <h2 class="text-2xl font-bold text-teal-600 mb-6">Badung Sehat Mobile</h2>
+                <p class="mb-6 text-gray-700">Aplikasi Badung Sehat Mobile adalah inovasi dari Pemerintah Kabupaten Badung untuk mendekatkan layanan kesehatan kepada masyarakat. Unduh aplikasi ini untuk akses mudah ke berbagai fitur kesehatan.</p>
+                
+                <h3 class="text-xl font-semibold text-purple-700 mb-3"><i class="fas fa-download mr-2"></i> Unduh Aplikasi</h3>
+                <p class="mb-2 text-gray-700">Pilih platform Anda untuk mengunduh aplikasi Badung Sehat Mobile:</p>
+                <a href="https://play.google.com/store/apps/details?id=com.badungkab.badungsehat" target="_blank" class="block link-item text-blue-700 hover:underline">
+                    <i class="fab fa-google-play"></i> Unduh di Google Play Store (Android)
+                </a>
+                <a href="https://apps.apple.com/id/app/badung-sehat-mobile/idXXXXXXXXX" target="_blank" class="block link-item text-blue-700 hover:underline">
+                    <i class="fab fa-app-store-ios"></i> Unduh di Apple App Store (iOS)
+                </a>
+                
+                <!-- QR Code for Badung Sehat Mobile -->
+                <div class="mt-6 text-center">
+                    <p class="mb-2 text-gray-700 font-semibold">Atau Scan QR Code di Bawah Ini untuk Unduh Cepat:</p>
+                    <a href="https://play.google.com/store/apps/details?id=com.badungkab.badungsehat" target="_blank" aria-label="QR Code Badung Sehat Mobile Play Store">
+                        <img src="WhatsApp Image 2025-06-23 at 22.46.35.jpeg" alt="QR Code Aplikasi Badung Sehat Mobile" class="mx-auto w-36 h-36 rounded-lg shadow-md hover:scale-105 transition-transform duration-200">
+                        <p class="text-sm text-gray-600 mt-1">(Klik gambar QR untuk langsung ke Play Store)</p>
+                    </a>
+                </div>
+
+                <h3 class="text-xl font-semibold text-purple-700 mb-3 mt-6"><i class="fas fa-info-circle mr-2"></i> Fitur Utama</h3>
+                <ul class="list-disc pl-5 text-gray-600">
+                    <li>Pendaftaran Online Rawat Jalan</li>
+                    <li>Informasi Jadwal Dokter</li>
+                    <li>Riwayat Pelayanan Kesehatan</li>
+                    <li>Edukasi Kesehatan</li>
+                    <li>Konsultasi Online (jika tersedia)</li>
+                </ul>
+            </div>
+
+            <!-- Layanan Pengaduan & Keluhan Section -->
+            <div id="pengaduan" class="content-section active">
+                <h2 class="text-2xl font-bold text-teal-600 mb-6">Layanan Pengaduan & Keluhan</h2>
+                <p class="mb-6 text-gray-700">Sampaikan pengaduan, keluhan, atau saran Anda terhadap pelayanan di UPTD Puskesmas Petang I melalui formulir online kami. Masukan Anda sangat berarti untuk peningkatan kualitas layanan.</p>
+
+                <!-- Link to Google Form with more engaging text and color on hover -->
+                <a href="https://bit.ly/FORM_PENGADUAN_KELUHAN_SARAN" target="_blank" class="block submit-button w-full mt-4 flex items-center justify-center
+                    bg-purple-700 hover:bg-orange-500 text-white hover:text-white transition-colors duration-300">
+                    <i class="fas fa-comments mr-2"></i> Beri Masukan & Saran (Klik Di Sini!)
+                </a>
+                
+                <div class="mt-8">
+                    <h3 class="text-xl font-semibold text-purple-700 mb-3"><i class="fab fa-whatsapp mr-2"></i> Kontak Langsung Via WhatsApp</h3>
+                    <a href="https://wa.me/6285847357810" target="_blank" class="block link-item bg-orange-100 text-orange-700 hover:underline">
+                        <i class="fab fa-whatsapp"></i> Chat WhatsApp
+                    </a>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-semibold text-purple-700 mb-3 mt-6"><i class="fas fa-map-marker-alt mr-2"></i> Kunjungi Kami</h3>
+                    <a href="https://maps.app.goo.gl/your-location" target="_blank" class="block link-item bg-orange-100 text-orange-700 hover:underline">
+                        <i class="fas fa-map"></i> Alamat Kantor: Jalan Kahuripan_Petang,Ds.Petang,Kec.Petang,Kab.Badung,Bali.
+                    </a>
+                    <!-- Clickable link for Google Maps -->
+                    <a href="https://maps.app.goo.gl/5xCEuSVYoXXP8qs57" target="_blank" class="block link-item bg-orange-100 text-orange-700 hover:underline mt-2">
+                        <i class="fas fa-directions"></i> Lihat Lokasi di Google Maps
+                    </a>
+                    <!-- Google Map Embed -->
+                    <div class="w-full h-64 mt-4 mb-4 rounded-lg overflow-hidden shadow-lg">
+                        <iframe 
+                            src="https://maps.app.goo.gl/5xCEuSVYoXXP8qs57" 
+                            width="100%" 
+                            height="100%" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                    <!-- New contact links under Kunjungi Kami -->
+                    <a href="mailto:uptd.puskesmaspetang1@gmail.com" target="_blank" class="block link-item bg-orange-100 text-orange-700 hover:underline mt-2">
+                        <i class="fas fa-envelope"></i> Email: uptd.puskesmaspetang1@gmail.com
+                    </a>
+                    <a href="https://www.instagram.com/puskesmas_petang_1" target="_blank" class="block link-item bg-orange-100 text-orange-700 hover:underline mt-2">
+                        <i class="fab fa-instagram"></i> Instagram: @puskesmas_petang_1
+                        <img src="WhatsApp Image 2025-06-23 at 22.29.23.jpeg" alt="QR Code Instagram" class="inline-block w-20 h-20 ml-2 rounded-lg">
+                    </a>
+                    <a href="https://www.facebook.com/share/16oqkRCRLX/" target="_blank" class="block link-item bg-orange-100 text-orange-700 hover:underline mt-2">
+                        <i class="fab fa-facebook"></i> Facebook: fb.com/share/16oqkRCRLX/
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebarButtons = document.querySelectorAll('.sidebar-button');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            // Function to display content section
+            function showSection(targetId) {
+                contentSections.forEach(section => {
+                    if (section.id === targetId) {
+                        section.classList.add('active');
+                    } else {
+                        section.classList.remove('active');
+                    }
+                });
+                // Update active state for buttons
+                sidebarButtons.forEach(button => {
+                    if (button.dataset.target === targetId) {
+                        button.classList.add('active');
+                    } else {
+                        button.classList.remove('active');
+                    }
+                });
+            }
+
+            // Add event listener to each sidebar button
+            sidebarButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.dataset.target;
+                    showSection(targetId);
+                });
+            });
+
+            // Display "Visi Misi Puskesmas" section by default on load
+            showSection('visi-misi');
+        });
+    </script>
+</body>
+</html>
